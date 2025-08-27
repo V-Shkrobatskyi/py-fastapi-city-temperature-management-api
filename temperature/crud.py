@@ -55,9 +55,7 @@ async def create_temperatures(db: AsyncSession, data_list: List[TemperatureReque
         await db.commit()
     except IntegrityError:
         await db.rollback()
-        raise ValueError(
-            "Duplicate entries."
-        )
+        raise ValueError("Duplicate entries.")
 
     for temp in temperatures:
         await db.refresh(temp)

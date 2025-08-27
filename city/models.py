@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from temperature.models import Temperature # fix
+from temperature.models import Temperature # noqa
 
 from database import Base
 
