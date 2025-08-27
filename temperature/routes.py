@@ -26,7 +26,7 @@ async def get_temperatures(
     return result
 
 
-async def update_temperatures(db: AsyncSession = Depends(get_db)):
+async def fetch_temperatures_from_api(db: AsyncSession = Depends(get_db)):
     results = []
     cities = await get_cities(db)
     cities = {(city.id, city.name) for city in cities}
@@ -50,14 +50,16 @@ async def update_temperatures(db: AsyncSession = Depends(get_db)):
                     )
                 )
         except httpx.HTTPError:
-            raise HTTPException(status_code=500, detail="Error in updating temperatures")
+            raise HTTPException(
+                status_code=500, detail="Error in updating temperatures"
+            )
 
     return results
 
 
 @temperature.post("/update", response_model=List[TemperatureResponse])
 async def update_temperatures(
-    data: List[TemperatureRequest] = Depends(update_temperatures),
+    data: List[TemperatureRequest] = Depends(fetch_temperatures_from_api),
     db: AsyncSession = Depends(get_db),
 ):
     return await crud.create_temperatures(db, data)
