@@ -19,14 +19,14 @@ async def get_cities(db: AsyncSession = Depends(get_db)):
 async def get_city_by_id(id: int, db: AsyncSession = Depends(get_db)):
     city = await crud.get_city_by_id(db, id)
     if not city:
-        raise HTTPException(status_code=404, detail="City not found")
+        raise HTTPException(status_code=404, detail=f"City with id {id} not found")
     return city
 
 
 @city.post("/", response_model=CityResponse)
 async def create_city(data: CityRequest, db: AsyncSession = Depends(get_db)):
     if await crud.get_city_by_name(db, data.name):
-        raise HTTPException(status_code=400, detail="City already exists")
+        raise HTTPException(status_code=400, detail=f"City '{data.name}' already exists")
     city = await crud.create_city(db, data)
     return CityResponse.model_validate(city)
 
@@ -35,5 +35,5 @@ async def create_city(data: CityRequest, db: AsyncSession = Depends(get_db)):
 async def delete_city(id: int, db: AsyncSession = Depends(get_db)):
     city = await crud.delete_city(db, id)
     if not city:
-        raise HTTPException(status_code=404, detail="City not found")
+        raise HTTPException(status_code=404, detail=f"City with id {id} not found")
     return
